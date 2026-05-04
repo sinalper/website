@@ -376,11 +376,13 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
   .nav-links {
     display: flex; flex-direction: column; position: fixed;
     top: 0; right: 0; bottom: 0; width: 260px;
-    background: var(--paper);
+    background: #f6f3ee;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     padding: 5rem 2rem 2rem;
     gap: 1.2rem; z-index: 150;
     border-left: 1px solid var(--divider);
-    box-shadow: -4px 0 24px rgba(0,0,0,0.08);
+    box-shadow: -8px 0 30px rgba(0,0,0,0.12);
     transform: translateX(100%);
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     align-items: flex-start;
@@ -392,7 +394,7 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
 
   .menu-backdrop {
     display: none; position: fixed; inset: 0;
-    background: rgba(26,26,26,0.3); z-index: 140;
+    background: rgba(26,26,26,0.45); z-index: 140;
     opacity: 0; transition: opacity 0.35s ease;
   }
   .menu-backdrop.visible { display: block; opacity: 1; }

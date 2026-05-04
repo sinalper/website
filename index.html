@@ -374,14 +374,28 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
 }
 @media (max-width: 640px) {
   .nav-links {
-    display: none; flex-direction: column; position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0; background: var(--paper);
-    justify-content: center; align-items: center; gap: 1.8rem; z-index: 150;
+    display: flex; flex-direction: column; position: fixed;
+    top: 0; right: 0; bottom: 0; width: 260px;
+    background: var(--paper);
+    padding: 5rem 2rem 2rem;
+    gap: 1.2rem; z-index: 150;
+    border-left: 1px solid var(--divider);
+    box-shadow: -4px 0 24px rgba(0,0,0,0.08);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    align-items: flex-start;
   }
-  .nav-links.open { display: flex; }
-  .nav-links a { font-size: 1.1rem; }
+  .nav-links.open { transform: translateX(0); }
+  .nav-links a { font-size: 1rem; padding: 0.4rem 0; }
   .hamburger { display: block; }
   section { padding: 3rem 1.2rem; }
+
+  .menu-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,26,26,0.3); z-index: 140;
+    opacity: 0; transition: opacity 0.35s ease;
+  }
+  .menu-backdrop.visible { display: block; opacity: 1; }
 }
 </style>
 </head>
@@ -406,8 +420,7 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
     </button>
   </div>
 </nav>
-
-<!-- HERO -->
+<div class="menu-backdrop" id="menuBackdrop"></div>
 <section class="hero" id="home">
   <div class="hero-inner">
     <div class="hero-text">
@@ -768,8 +781,12 @@ const nav = document.getElementById('navbar');
 window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 20); });
 const menuBtn = document.getElementById('menuBtn');
 const navLinks = document.getElementById('navLinks');
-menuBtn.addEventListener('click', () => { menuBtn.classList.toggle('active'); navLinks.classList.toggle('open'); });
-navLinks.querySelectorAll('a').forEach(a => { a.addEventListener('click', () => { menuBtn.classList.remove('active'); navLinks.classList.remove('open'); }); });
+const backdrop = document.getElementById('menuBackdrop');
+function closeMenu() { menuBtn.classList.remove('active'); navLinks.classList.remove('open'); backdrop.classList.remove('visible'); document.body.style.overflow = ''; }
+function openMenu() { menuBtn.classList.add('active'); navLinks.classList.add('open'); backdrop.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+menuBtn.addEventListener('click', () => { navLinks.classList.contains('open') ? closeMenu() : openMenu(); });
+backdrop.addEventListener('click', closeMenu);
+navLinks.querySelectorAll('a').forEach(a => { a.addEventListener('click', closeMenu); });
 const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 const pubTabs = document.querySelectorAll('.pub-tab');

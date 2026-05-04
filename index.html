@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -372,32 +371,42 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
   .pub-item { grid-template-columns: auto 1fr; }
   .pub-type { display: none; }
 }
+/* ── MOBILE SIDEBAR ── */
+.mobile-sidebar {
+  display: none; flex-direction: column;
+  position: fixed; top: 0; right: 0; bottom: 0; width: 260px;
+  background-color: #f6f3ee;
+  padding: 5rem 2rem 2rem;
+  gap: 1.2rem; z-index: 9999;
+  border-left: 1px solid var(--divider);
+  box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  align-items: flex-start;
+}
+.mobile-sidebar.open { display: flex; transform: translateX(0); }
+.mobile-sidebar a {
+  font-size: 1rem; font-weight: 500; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink);
+  text-decoration: none; padding: 0.4rem 0;
+}
+.mobile-sidebar a:hover { color: var(--accent); }
+.menu-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,26,26,0.5); z-index: 9998;
+  opacity: 0; transition: opacity 0.35s ease;
+}
+.menu-backdrop.visible { display: block; opacity: 1; }
+
 @media (max-width: 640px) {
-  .nav-links {
-    display: flex; flex-direction: column; position: fixed;
-    top: 0; right: 0; bottom: 0; width: 260px;
+  nav {
     background: #f6f3ee;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    padding: 5rem 2rem 2rem;
-    gap: 1.2rem; z-index: 150;
-    border-left: 1px solid var(--divider);
-    box-shadow: -8px 0 30px rgba(0,0,0,0.12);
-    transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    align-items: flex-start;
   }
-  .nav-links.open { transform: translateX(0); }
-  .nav-links a { font-size: 1rem; padding: 0.4rem 0; }
-  .hamburger { display: block; }
+  .nav-links--desktop { display: none !important; }
+  .hamburger { display: block; z-index: 10000; }
   section { padding: 3rem 1.2rem; }
-
-  .menu-backdrop {
-    display: none; position: fixed; inset: 0;
-    background: rgba(26,26,26,0.45); z-index: 140;
-    opacity: 0; transition: opacity 0.35s ease;
-  }
-  .menu-backdrop.visible { display: block; opacity: 1; }
 }
 </style>
 </head>
@@ -407,7 +416,7 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
 <nav id="navbar">
   <div class="nav-inner">
     <a href="#" class="nav-logo">Sinan Alper</a>
-    <div class="nav-links" id="navLinks">
+    <div class="nav-links nav-links--desktop">
       <a href="#research">Research</a>
       <a href="#publications">Publications</a>
       <a href="#grants">Grants</a>
@@ -422,6 +431,17 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
     </button>
   </div>
 </nav>
+<!-- Mobile sidebar (outside nav to avoid backdrop-filter stacking context) -->
+<div class="mobile-sidebar" id="mobileSidebar">
+  <a href="#research">Research</a>
+  <a href="#publications">Publications</a>
+  <a href="#grants">Grants</a>
+  <a href="#lab">ProCon Lab</a>
+  <a href="#teaching">Teaching</a>
+  <a href="#editorial">Service</a>
+  <a href="#materials">Materials</a>
+  <a href="#contact">Contact</a>
+</div>
 <div class="menu-backdrop" id="menuBackdrop"></div>
 <section class="hero" id="home">
   <div class="hero-inner">
@@ -782,13 +802,13 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--divider)
 const nav = document.getElementById('navbar');
 window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 20); });
 const menuBtn = document.getElementById('menuBtn');
-const navLinks = document.getElementById('navLinks');
+const sidebar = document.getElementById('mobileSidebar');
 const backdrop = document.getElementById('menuBackdrop');
-function closeMenu() { menuBtn.classList.remove('active'); navLinks.classList.remove('open'); backdrop.classList.remove('visible'); document.body.style.overflow = ''; }
-function openMenu() { menuBtn.classList.add('active'); navLinks.classList.add('open'); backdrop.classList.add('visible'); document.body.style.overflow = 'hidden'; }
-menuBtn.addEventListener('click', () => { navLinks.classList.contains('open') ? closeMenu() : openMenu(); });
+function closeMenu() { menuBtn.classList.remove('active'); sidebar.classList.remove('open'); backdrop.classList.remove('visible'); document.body.style.overflow = ''; }
+function openMenu() { menuBtn.classList.add('active'); sidebar.classList.add('open'); backdrop.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+menuBtn.addEventListener('click', () => { sidebar.classList.contains('open') ? closeMenu() : openMenu(); });
 backdrop.addEventListener('click', closeMenu);
-navLinks.querySelectorAll('a').forEach(a => { a.addEventListener('click', closeMenu); });
+sidebar.querySelectorAll('a').forEach(a => { a.addEventListener('click', closeMenu); });
 const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 const pubTabs = document.querySelectorAll('.pub-tab');
